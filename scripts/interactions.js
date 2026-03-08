@@ -97,6 +97,17 @@ function setupTrayDelegation() {
   const trayItems = document.getElementById('trayItems');
   if (!trayItems) return;
   trayItems.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.tray-remove-btn');
+    if (removeBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const denom = Number(removeBtn.dataset.denom);
+      if (denom != null && !Number.isNaN(denom)) {
+        delete state.notes[denom];
+        updateUI();
+      }
+      return;
+    }
     const minus = e.target.closest('.tray-minus');
     const plus = e.target.closest('.tray-plus');
     if (minus) {

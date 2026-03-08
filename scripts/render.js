@@ -148,7 +148,7 @@ function renderTray() {
               </button>
             </div>
           </div>
-          <div class="tray-item-swipe-action" data-swipe-action>Remove</div>
+          <button type="button" class="tray-remove-btn" data-denom="${denom}" aria-label="Remove all ₹${denom} notes">Remove</button>
         </div>`;
       })
       .join('');

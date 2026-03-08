@@ -132,6 +132,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(88px + env(safe-area-inset-bottom, 16px));
 }
 
 /* ============================
@@ -471,19 +472,23 @@ body {
   min-width: 28px;
   min-height: 28px;
   border: none;
-  background: transparent;
+  background: rgba(0,0,0,0.06);
   border-radius: var(--radius-full);
   cursor: pointer;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
   transition: background var(--duration-fast) var(--ease-out);
+  flex-shrink: 0;
 }
 .note-card.has-count .note-minus-btn {
   display: flex;
 }
 .note-minus-btn:hover {
-  background: rgba(0,0,0,0.06);
+  background: rgba(0,0,0,0.1);
+}
+.note-minus-btn:active {
+  background: rgba(0,0,0,0.12);
 }
 .note-minus-btn span {
   font-size: 1.25rem;
@@ -819,19 +824,32 @@ body {
   transform: translateX(var(--swipe-x, 0));
 }
 
-.tray-item-swipe-action {
+.tray-remove-btn {
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
   width: 72px;
+  border: none;
   background: #FEE2E2;
   color: #B91C1C;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.tray-remove-btn:hover {
+  background: #FECACA;
+}
+.tray-remove-btn:active {
+  background: #FCA5A5;
 }
 
 .tray-item-color {
