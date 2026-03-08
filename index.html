@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#1A6FEF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Cash Mode">
   <link rel="manifest" href="manifest.json">
   <title>Smart Spending Mode — Pay like cash</title>
   <link rel="stylesheet" href="styles.css">
@@ -72,30 +75,6 @@
 
     <!-- ======== CASH MODE ONLY ======== -->
     <div class="cash-only" id="cashOnly">
-      <section class="wallet-section" id="walletSection">
-        <div class="wallet-card">
-          <div class="wallet-header">
-            <span class="wallet-title">Today's spending allowance</span>
-            <span class="wallet-remaining" id="walletRemaining">₹2,000</span>
-          </div>
-          <div class="wallet-bar-track">
-            <div class="wallet-bar-fill" id="walletBarFill" style="width:100%"></div>
-          </div>
-          <div class="wallet-stack" id="walletStack"></div>
-        </div>
-      </section>
-
-      <section class="streak-section" id="streakSection">
-        <div class="streak-card">
-          <div class="streak-fire">&#x1F525;</div>
-          <div class="streak-info">
-            <span class="streak-label">3 Day Smart Spending Streak</span>
-            <span class="streak-detail">You stayed under your daily budget</span>
-          </div>
-          <span class="streak-badge">Under budget</span>
-        </div>
-      </section>
-
       <section class="denom-section" id="denomSection">
         <div class="denom-grid-primary">
           <div class="note-card note-500 animate-in" data-value="500" role="button" tabindex="0" aria-label="Add 500 rupee note">
@@ -213,8 +192,31 @@
         </div>
       </section>
 
+      <section class="streak-section" id="streakSection">
+        <div class="streak-card">
+          <div class="streak-fire">&#x1F525;</div>
+          <div class="streak-info">
+            <span class="streak-label">3 Day Smart Spending Streak</span>
+            <span class="streak-detail">You stayed under your daily budget</span>
+          </div>
+          <span class="streak-badge">Under budget</span>
+        </div>
+      </section>
+
+      <section class="wallet-section" id="walletSection">
+        <div class="wallet-card">
+          <div class="wallet-header">
+            <span class="wallet-title">Today's spending allowance</span>
+            <span class="wallet-remaining" id="walletRemaining">₹2,000</span>
+          </div>
+          <div class="wallet-bar-track">
+            <div class="wallet-bar-fill" id="walletBarFill" style="width:100%"></div>
+          </div>
+          <div class="wallet-stack" id="walletStack"></div>
+        </div>
+      </section>
+
       <section class="tray-section">
-    <section class="tray-section">
       <div class="tray-card" id="trayCard">
         <div class="tray-header">
           <div class="tray-title">
@@ -290,12 +292,22 @@
       </div>
     </section>
 
-    <!-- ======== BOTTOM CTA ======== -->
+  </div><!-- end .app-scroll -->
+
+  <!-- ======== BOTTOM DOCK (fixed) ======== -->
+  <div class="bottom-dock">
+    <div class="bottom-allowance" id="bottomAllowance">
+      <div class="bottom-allowance-row">
+        <span class="bottom-allowance-label" id="bottomAllowanceLabel">₹2,000 left today in wallet</span>
+      </div>
+      <div class="bottom-allowance-track">
+        <div class="bottom-allowance-fill" id="bottomAllowanceFill" style="width: 100%;"></div>
+      </div>
+    </div>
     <div class="bottom-cta">
       <button class="cta-btn disabled" id="ctaBtn">Select amount</button>
     </div>
-
-  </div><!-- end .app-scroll -->
+  </div>
 
   <!-- ======== CONFIRM MODAL ======== -->
   <div class="confirm-overlay" id="confirmOverlay">

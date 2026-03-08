@@ -32,7 +32,7 @@ function updateAmountDisplay() {
     }
     if (amountRemainingLine) {
       const remaining = Math.max(0, DAILY_LIMIT - total);
-      amountRemainingLine.textContent = `₹${formatAmount(remaining)} left today`;
+      amountRemainingLine.textContent = `₹${formatAmount(remaining)} left today in wallet`;
       amountRemainingLine.style.display = total > 0 ? '' : 'none';
     }
   } else {
@@ -81,6 +81,22 @@ function renderWalletSection() {
     });
     walletStack.innerHTML = stackHTML.join('');
   }
+}
+
+/** Compact allowance strip in bottom dock: label + fill. Cash Mode only. */
+function renderBottomAllowance() {
+  const wrap = document.getElementById('bottomAllowance');
+  const label = document.getElementById('bottomAllowanceLabel');
+  const fill = document.getElementById('bottomAllowanceFill');
+  if (!wrap || !label || !fill) return;
+
+  const remaining = Math.max(0, DAILY_LIMIT - (state.mode === 'cash' ? state.total : 0));
+  const pct = (remaining / DAILY_LIMIT) * 100;
+  label.textContent = `₹${formatAmount(remaining)} left today in wallet`;
+  fill.style.width = pct + '%';
+  fill.classList.remove('warn', 'danger');
+  if (pct <= 25) fill.classList.add('danger');
+  else if (pct <= 50) fill.classList.add('warn');
 }
 
 function renderRegretPreview() {
@@ -177,8 +193,10 @@ function setModeVisibility() {
   const isCash = state.mode === 'cash';
   const cashOnly = document.getElementById('cashOnly');
   const keypadSection = document.getElementById('keypadSection');
+  const bottomAllowance = document.getElementById('bottomAllowance');
   if (cashOnly) cashOnly.style.display = isCash ? '' : 'none';
   if (keypadSection) keypadSection.style.display = isCash ? 'none' : '';
+  if (bottomAllowance) bottomAllowance.style.display = isCash ? '' : 'none';
 }
 
 function updateUI() {
@@ -188,6 +206,7 @@ function updateUI() {
   if (state.mode === 'cash') {
     renderWalletSection();
     renderRegretPreview();
+    renderBottomAllowance();
   }
   setModeVisibility();
 }
