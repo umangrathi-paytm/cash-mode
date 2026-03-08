@@ -13,8 +13,9 @@
 <div class="app-shell">
   <div class="app-scroll">
 
+    <!-- ======== TOP BAR ======== -->
     <header class="top-bar">
-      <button type="button" class="back-btn" aria-label="Go back">
+      <button class="back-btn" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 12H5"/>
           <path d="M12 19l-7-7 7-7"/>
@@ -22,8 +23,10 @@
       </button>
     </header>
 
+    <!-- ======== PAYEE SECTION ======== -->
     <section class="payee-section">
       <div class="payee-avatar">
+        <!-- Placeholder avatar using inline SVG data -->
         <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;background:#E5E7EB;">
           <rect width="64" height="64" fill="#D1D5DB"/>
           <circle cx="32" cy="24" r="12" fill="#9CA3AF"/>
@@ -40,6 +43,7 @@
       </div>
     </section>
 
+    <!-- ======== MODE SWITCH CARD ======== -->
     <section class="mode-card">
       <div class="mode-card-header">
         <div class="mode-card-label">
@@ -50,30 +54,28 @@
       </div>
       <div class="mode-switch">
         <div class="mode-switch-track cash-active" id="modeSwitchTrack"></div>
-        <button type="button" class="mode-switch-btn" id="btnAmountMode">Amount Mode</button>
-        <button type="button" class="mode-switch-btn active" id="btnCashMode">Cash Mode</button>
+        <button class="mode-switch-btn" id="btnAmountMode">Amount Mode</button>
+        <button class="mode-switch-btn active" id="btnCashMode">Cash Mode</button>
       </div>
-      <p class="mode-card-entry" id="modeCardEntry">Want to control daily spending? Try spending like cash for a week.</p>
     </section>
 
+    <!-- ======== AMOUNT DISPLAY ======== -->
     <section class="amount-section">
       <div class="amount-label">Amount</div>
       <div class="amount-value" id="amountDisplay">
         <span class="amount-currency">₹</span>
         <span id="amountNumber">0</span>
       </div>
-      <div class="amount-helper" id="amountHelper" style="display: none;">Paying like cash</div>
+      <div class="amount-helper" id="amountHelper">Paying like cash</div>
       <div class="amount-remaining-line" id="amountRemainingLine" style="display: none;"></div>
     </section>
 
-    <div id="cashOnly">
+    <!-- ======== CASH MODE ONLY ======== -->
+    <div class="cash-only" id="cashOnly">
       <section class="wallet-section" id="walletSection">
         <div class="wallet-card">
           <div class="wallet-header">
-            <div>
-              <div class="wallet-title">Today's spending allowance</div>
-              <div class="wallet-microcopy">Daily spending allowance ₹2,000</div>
-            </div>
+            <span class="wallet-title">Today's spending allowance</span>
             <span class="wallet-remaining" id="walletRemaining">₹2,000</span>
           </div>
           <div class="wallet-bar-track">
@@ -97,96 +99,132 @@
       <section class="denom-section" id="denomSection">
         <div class="denom-grid-primary">
           <div class="note-card note-500 animate-in" data-value="500" role="button" tabindex="0" aria-label="Add 500 rupee note">
-            <button type="button" class="note-minus-btn" data-value="500" aria-label="Remove one 500 rupee note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-500">0</span>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="500" aria-label="Remove one 500 rupee note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-500">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>500</div>
+              <div class="note-label">note</div>
+            </div>
             <div class="note-corner note-corner-tl"></div>
             <div class="note-corner note-corner-br"></div>
-            <div class="note-value"><span class="note-rupee">₹</span>500</div>
-            <div class="note-label">note</div>
           </div>
           <div class="note-card note-200 animate-in" data-value="200" role="button" tabindex="0" aria-label="Add 200 rupee note">
-            <button type="button" class="note-minus-btn" data-value="200" aria-label="Remove one 200 rupee note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-200">0</span>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="200" aria-label="Remove one 200 rupee note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-200">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>200</div>
+              <div class="note-label">note</div>
+            </div>
             <div class="note-corner note-corner-tl"></div>
             <div class="note-corner note-corner-br"></div>
-            <div class="note-value"><span class="note-rupee">₹</span>200</div>
-            <div class="note-label">note</div>
           </div>
           <div class="note-card note-100 animate-in" data-value="100" role="button" tabindex="0" aria-label="Add 100 rupee note">
-            <button type="button" class="note-minus-btn" data-value="100" aria-label="Remove one 100 rupee note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-100">0</span>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="100" aria-label="Remove one 100 rupee note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-100">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>100</div>
+              <div class="note-label">note</div>
+            </div>
             <div class="note-corner note-corner-tl"></div>
             <div class="note-corner note-corner-br"></div>
-            <div class="note-value"><span class="note-rupee">₹</span>100</div>
-            <div class="note-label">note</div>
           </div>
           <div class="note-card note-50 animate-in" data-value="50" role="button" tabindex="0" aria-label="Add 50 rupee note">
-            <button type="button" class="note-minus-btn" data-value="50" aria-label="Remove one 50 rupee note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-50">0</span>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="50" aria-label="Remove one 50 rupee note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-50">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>50</div>
+              <div class="note-label">note</div>
+            </div>
             <div class="note-corner note-corner-tl"></div>
             <div class="note-corner note-corner-br"></div>
-            <div class="note-value"><span class="note-rupee">₹</span>50</div>
-            <div class="note-label">note</div>
           </div>
           <div class="note-card note-20 animate-in" data-value="20" role="button" tabindex="0" aria-label="Add 20 rupee note">
-            <button type="button" class="note-minus-btn" data-value="20" aria-label="Remove one 20 rupee note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-20">0</span>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="20" aria-label="Remove one 20 rupee note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-20">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>20</div>
+              <div class="note-label">note</div>
+            </div>
             <div class="note-corner note-corner-tl"></div>
             <div class="note-corner note-corner-br"></div>
-            <div class="note-value"><span class="note-rupee">₹</span>20</div>
-            <div class="note-label">note</div>
           </div>
           <div class="note-card note-10 animate-in" data-value="10" role="button" tabindex="0" aria-label="Add 10 rupee note">
-            <button type="button" class="note-minus-btn" data-value="10" aria-label="Remove one 10 rupee note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-10">0</span>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="10" aria-label="Remove one 10 rupee note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-10">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>10</div>
+              <div class="note-label">note</div>
+            </div>
             <div class="note-corner note-corner-tl"></div>
             <div class="note-corner note-corner-br"></div>
-            <div class="note-value"><span class="note-rupee">₹</span>10</div>
-            <div class="note-label">note</div>
           </div>
         </div>
         <div class="denom-grid-secondary">
           <div class="note-card note-secondary note-5 animate-in" data-value="5" role="button" tabindex="0" aria-label="Add 5 rupee coin">
-            <button type="button" class="note-minus-btn" data-value="5" aria-label="Remove one 5 rupee coin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-5">0</span>
-            <div class="note-value"><span class="note-rupee">₹</span>5</div>
-            <div class="note-label">coin</div>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="5" aria-label="Remove one 5 rupee coin">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-5">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>5</div>
+              <div class="note-label">coin</div>
+            </div>
           </div>
           <div class="note-card note-secondary note-2 animate-in" data-value="2" role="button" tabindex="0" aria-label="Add 2 rupee coin">
-            <button type="button" class="note-minus-btn" data-value="2" aria-label="Remove one 2 rupee coin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-2">0</span>
-            <div class="note-value"><span class="note-rupee">₹</span>2</div>
-            <div class="note-label">coin</div>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="2" aria-label="Remove one 2 rupee coin">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-2">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>2</div>
+              <div class="note-label">coin</div>
+            </div>
           </div>
           <div class="note-card note-secondary note-1 animate-in" data-value="1" role="button" tabindex="0" aria-label="Add 1 rupee coin">
-            <button type="button" class="note-minus-btn" data-value="1" aria-label="Remove one 1 rupee coin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <span class="note-count-badge" id="badge-1">0</span>
-            <div class="note-value"><span class="note-rupee">₹</span>1</div>
-            <div class="note-label">coin</div>
+            <div class="note-card-top">
+              <button type="button" class="note-minus-btn" data-value="1" aria-label="Remove one 1 rupee coin">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <span class="note-count-badge" id="badge-1">0</span>
+            </div>
+            <div class="note-card-body">
+              <div class="note-value"><span class="note-rupee">₹</span>1</div>
+              <div class="note-label">coin</div>
+            </div>
           </div>
           <div></div>
         </div>
       </section>
 
-      <section class="regret-section" id="regretSection">
+      <section class="regret-section" id="regretSection" style="display: none;">
         <div class="regret-card">
           <div class="regret-title">This payment could buy</div>
           <div class="regret-items" id="regretItems"></div>
@@ -194,32 +232,41 @@
       </section>
 
       <section class="tray-section">
-        <div class="tray-card" id="trayCard">
-          <div class="tray-header">
-            <div class="tray-title">
-              <svg class="tray-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-              </svg>
-              Payment tray
-            </div>
-            <button type="button" class="tray-clear-btn" id="trayClearBtn">Clear all</button>
-          </div>
-          <div class="tray-empty" id="trayEmpty">
-            <svg class="tray-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <section class="tray-section">
+      <div class="tray-card" id="trayCard">
+        <div class="tray-header">
+          <div class="tray-title">
+            <svg class="tray-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
               <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-              <path d="M9 14h6"/>
             </svg>
-            <span class="tray-empty-text">Tap notes to build your amount</span>
+            Payment tray
           </div>
-          <div class="tray-items" id="trayItems"></div>
-          <div class="tray-total">
-            <span class="tray-total-label">Total</span>
-            <span class="tray-total-value" id="trayTotalValue">₹0</span>
-          </div>
+          <button class="tray-clear-btn" id="trayClearBtn">Clear all</button>
         </div>
-      </section>
+
+        <!-- Empty state -->
+        <div class="tray-empty" id="trayEmpty">
+          <svg class="tray-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            <path d="M9 14h6"/>
+          </svg>
+          <span class="tray-empty-text">Tap notes to build your amount</span>
+        </div>
+
+        <!-- Tray items container (populated by JS) -->
+        <div class="tray-items" id="trayItems">
+          <!-- Tray items will render here -->
+        </div>
+
+        <!-- Tray total -->
+        <div class="tray-total">
+          <span class="tray-total-label">Total</span>
+          <span class="tray-total-value" id="trayTotalValue">₹0</span>
+        </div>
+      </div>
+    </section>
 
       <section class="message-section">
         <div class="message-input-wrap">
@@ -235,22 +282,23 @@
           <span class="message-tag">Utilities</span>
         </div>
       </section>
-    </div>
+    </div><!-- end .cash-only -->
 
-    <section class="keypad-section" id="keypadSection">
+    <!-- ======== KEYPAD (Amount Mode) ======== -->
+    <section class="keypad-section amount-only" id="keypadSection">
       <div class="keypad-grid">
-        <button type="button" class="keypad-key" data-key="1">1</button>
-        <button type="button" class="keypad-key" data-key="2">2</button>
-        <button type="button" class="keypad-key" data-key="3">3</button>
-        <button type="button" class="keypad-key" data-key="4">4</button>
-        <button type="button" class="keypad-key" data-key="5">5</button>
-        <button type="button" class="keypad-key" data-key="6">6</button>
-        <button type="button" class="keypad-key" data-key="7">7</button>
-        <button type="button" class="keypad-key" data-key="8">8</button>
-        <button type="button" class="keypad-key" data-key="9">9</button>
-        <button type="button" class="keypad-key" data-key=".">.</button>
-        <button type="button" class="keypad-key" data-key="0">0</button>
-        <button type="button" class="keypad-key key-backspace" data-key="backspace">
+        <button class="keypad-key" data-key="1">1</button>
+        <button class="keypad-key" data-key="2">2</button>
+        <button class="keypad-key" data-key="3">3</button>
+        <button class="keypad-key" data-key="4">4</button>
+        <button class="keypad-key" data-key="5">5</button>
+        <button class="keypad-key" data-key="6">6</button>
+        <button class="keypad-key" data-key="7">7</button>
+        <button class="keypad-key" data-key="8">8</button>
+        <button class="keypad-key" data-key="9">9</button>
+        <button class="keypad-key" data-key=".">.</button>
+        <button class="keypad-key" data-key="0">0</button>
+        <button class="keypad-key key-backspace" data-key="backspace">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
             <line x1="18" y1="9" x2="12" y2="15"/>
@@ -260,23 +308,26 @@
       </div>
     </section>
 
+    <!-- ======== BOTTOM CTA ======== -->
     <div class="bottom-cta">
-      <button type="button" class="cta-btn disabled" id="ctaBtn">Select amount</button>
+      <button class="cta-btn disabled" id="ctaBtn">Select amount</button>
     </div>
 
-  </div>
-</div>
+  </div><!-- end .app-scroll -->
 
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-sheet">
-    <div class="confirm-amount" id="confirmAmount">₹5,000</div>
-    <div class="confirm-desc">Are you sure you want to pay this amount?</div>
-    <div class="confirm-actions">
-      <button type="button" class="confirm-pay-btn" id="confirmPayBtn">Yes, pay now</button>
-      <button type="button" class="confirm-cancel-btn" id="confirmCancelBtn">Go back</button>
+  <!-- ======== CONFIRM MODAL ======== -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-sheet">
+      <div class="confirm-amount" id="confirmAmount">₹5,000</div>
+      <div class="confirm-desc">Are you sure you want to pay this amount?</div>
+      <div class="confirm-actions">
+        <button class="confirm-pay-btn" id="confirmPayBtn">Yes, pay now</button>
+        <button class="confirm-cancel-btn" id="confirmCancelBtn">Go back</button>
+      </div>
     </div>
   </div>
-</div>
+
+</div><!-- end .app-shell -->
 
 <script src="scripts/state.js"></script>
 <script src="scripts/utils.js"></script>
@@ -284,5 +335,6 @@
 <script src="scripts/render.js"></script>
 <script src="scripts/interactions.js"></script>
 <script src="scripts/app.js"></script>
+
 </body>
 </html>

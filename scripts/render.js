@@ -89,15 +89,18 @@ function renderRegretPreview() {
   const itemsEl = document.getElementById('regretItems');
   if (!section || !itemsEl) return;
 
-  if (total < REGRET_THRESHOLD) {
+  if (state.mode !== 'cash' || total < REGRET_THRESHOLD) {
     section.classList.remove('visible');
+    section.style.display = 'none';
     return;
   }
   const items = getRegretEquivalents(total, 3);
   if (items.length === 0) {
     section.classList.remove('visible');
+    section.style.display = 'none';
     return;
   }
+  section.style.display = 'block';
   section.classList.add('visible');
   itemsEl.innerHTML = items
     .map(({ label }) => `<div class="regret-item"><span class="regret-dot"></span>${label}</div>`)

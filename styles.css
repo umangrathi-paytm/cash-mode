@@ -406,11 +406,12 @@ body {
   gap: var(--space-sm);
 }
 
-/* ---- Note Card ---- */
+/* ---- Note Card: top utility row + body (no overlap on amount) ---- */
 .note-card {
   position: relative;
   border-radius: var(--radius-md);
-  padding: var(--space-base) var(--space-md);
+  padding: var(--space-sm) var(--space-md) var(--space-base);
+  padding-top: var(--space-sm);
   cursor: pointer;
   border: 1.5px solid transparent;
   user-select: none;
@@ -421,7 +422,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 80px;
   overflow: hidden;
 }
@@ -453,6 +454,80 @@ body {
   pointer-events: none;
 }
 
+.note-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  width: 100%;
+  min-height: 28px;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+}
+
+.note-minus-btn {
+  display: none;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.note-card.has-count .note-minus-btn {
+  display: flex;
+}
+.note-minus-btn:hover {
+  background: rgba(0,0,0,0.06);
+}
+.note-minus-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.note-count-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  box-shadow: 0 0 0 2px var(--bg);
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity var(--duration-fast) var(--ease-spring),
+    transform var(--duration-fast) var(--ease-spring);
+}
+.note-card.has-count .note-count-badge {
+  opacity: 1;
+  transform: scale(1);
+}
+.note-secondary .note-count-badge {
+  min-width: 18px;
+  height: 18px;
+  font-size: 0.625rem;
+}
+
+.note-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
 .note-value {
   font-size: 1.375rem;
   font-weight: 700;
@@ -476,77 +551,6 @@ body {
   letter-spacing: 0.06em;
   opacity: 0.5;
   margin-top: 3px;
-}
-
-/* Counter badge on note card */
-.note-count-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  min-width: 22px;
-  height: 22px;
-  border-radius: var(--radius-full);
-  background: var(--accent);
-  color: #fff;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 6px;
-  box-shadow: 0 0 0 2px var(--bg);
-  opacity: 0;
-  transform: scale(0.5);
-  transition:
-    opacity var(--duration-fast) var(--ease-spring),
-    transform var(--duration-fast) var(--ease-spring);
-  z-index: 3;
-  pointer-events: none;
-}
-.note-card.has-count .note-count-badge {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.note-secondary .note-count-badge {
-  min-width: 18px;
-  height: 18px;
-  font-size: 0.625rem;
-}
-
-.note-minus-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  transition: background var(--duration-fast) var(--ease-out);
-  z-index: 4;
-}
-.note-card.has-count .note-minus-btn {
-  display: flex;
-  top: 8px;
-  right: 8px;
-}
-.note-card.has-count .note-count-badge {
-  right: 42px;
-}
-.note-minus-btn:hover {
-  background: rgba(0,0,0,0.06);
-}
-.note-minus-btn svg {
-  width: 14px;
-  height: 14px;
 }
 
 .note-ripple {
@@ -625,7 +629,10 @@ body {
 
 .note-card.note-secondary {
   min-height: 56px;
-  padding: var(--space-sm) var(--space-sm);
+  padding: var(--space-sm);
+}
+.note-secondary .note-card-top {
+  min-height: 22px;
 }
 .note-secondary .note-value {
   font-size: 1rem;

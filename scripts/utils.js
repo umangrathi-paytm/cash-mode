@@ -42,7 +42,7 @@ const REGRET_EQUIVALENTS_HIGH = [
 ];
 
 function getRegretEquivalents(amount, maxItems = 3) {
-  if (amount < 300) return [];
+  if (amount < 300) return []; /* matches REGRET_THRESHOLD in state.js */
   const candidates = amount < 1000 ? REGRET_EQUIVALENTS_LOW : REGRET_EQUIVALENTS_HIGH;
   const withQty = candidates
     .map(e => {
