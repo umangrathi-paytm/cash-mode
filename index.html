@@ -1,0 +1,2064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Smart Spending Mode — Cash Mode</title>
+<style>
+  /* ============================
+     RESET & BASE
+     ============================ */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :root {
+    /* Primary palette */
+    --bg: #F6F7F9;
+    --surface: #FFFFFF;
+    --text-primary: #1A1D23;
+    --text-secondary: #6B7280;
+    --text-tertiary: #9CA3AF;
+    --accent: #1A6FEF;
+    --accent-light: #E8F0FE;
+    --accent-soft: #3B82F6;
+    --border: #E5E7EB;
+    --border-light: #F0F1F3;
+
+    /* Denomination tints */
+    --note-500-bg: #E8EDEB;
+    --note-500-border: #C5CFC9;
+    --note-500-text: #3D5A4C;
+    --note-500-accent: #4A7A60;
+
+    --note-200-bg: #FDF0E4;
+    --note-200-border: #F5D5B0;
+    --note-200-text: #7A5230;
+    --note-200-accent: #C4793A;
+
+    --note-100-bg: #EEEAF6;
+    --note-100-border: #D4C8E8;
+    --note-100-text: #5B4680;
+    --note-100-accent: #7B5EA7;
+
+    --note-50-bg: #E6EFF8;
+    --note-50-border: #BCCFE6;
+    --note-50-text: #2E5479;
+    --note-50-accent: #3D7ABD;
+
+    --note-20-bg: #FBF4E4;
+    --note-20-border: #EFD99D;
+    --note-20-text: #6B5C2E;
+    --note-20-accent: #B8952E;
+
+    --note-10-bg: #F3EDE6;
+    --note-10-border: #DFD2C2;
+    --note-10-text: #6B5840;
+    --note-10-accent: #9C7E56;
+
+    --note-5-bg: #F0EDED;
+    --note-5-border: #D6D1D1;
+    --note-5-text: #5A5252;
+    --note-5-accent: #7A6F6F;
+
+    --note-2-bg: #EDEFF0;
+    --note-2-border: #D1D5D6;
+    --note-2-text: #4A5255;
+    --note-2-accent: #6A777A;
+
+    --note-1-bg: #EEEEEE;
+    --note-1-border: #D4D4D4;
+    --note-1-text: #555555;
+    --note-1-accent: #777777;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-note: 0 2px 6px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-note-hover: 0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
+
+    /* Spacing scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-base: 16px;
+    --space-lg: 20px;
+    --space-xl: 24px;
+    --space-2xl: 32px;
+    --space-3xl: 40px;
+
+    /* Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 400ms;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* ============================
+     APP SHELL
+     ============================ */
+  .app-shell {
+    max-width: 430px;
+    height: 100dvh;
+    margin: 0 auto;
+    background: var(--bg);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .app-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ============================
+     TOP BAR
+     ============================ */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    padding: var(--space-base) var(--space-lg);
+    padding-top: max(var(--space-base), env(safe-area-inset-top, 16px));
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background var(--duration-fast) var(--ease-out);
+    margin-left: -8px;
+  }
+  .back-btn:hover {
+    background: rgba(0,0,0,0.04);
+  }
+  .back-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2;
+  }
+
+  /* ============================
+     PAYEE SECTION
+     ============================ */
+  .payee-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-sm) var(--space-lg) var(--space-lg);
+  }
+
+  .payee-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-md);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    position: relative;
+  }
+  .payee-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* Placeholder gradient for avatar */
+  .payee-avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+  }
+
+  .payee-name {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .payee-name strong {
+    font-weight: 650;
+  }
+
+  .payee-upi {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 3px;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.005em;
+  }
+
+  .verified-badge {
+    width: 16px;
+    height: 16px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ============================
+     MODE SWITCH CARD
+     ============================ */
+  .mode-card {
+    margin: 0 var(--space-lg);
+    padding: var(--space-base);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+  }
+
+  .mode-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .mode-card-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mode-card-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.01em;
+  }
+
+  .mode-card-subtitle {
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.01em;
+  }
+
+  /* Smart Spending indicator dot */
+  .mode-card-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: #34D399;
+    box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
+  }
+
+  /* Segmented control */
+  .mode-switch {
+    display: flex;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 3px;
+    position: relative;
+  }
+
+  .mode-switch-track {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    height: calc(100% - 6px);
+    background: var(--surface);
+    border-radius: 6px;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--duration-normal) var(--ease-out);
+    z-index: 1;
+  }
+  .mode-switch-track.cash-active {
+    transform: translateX(100%);
+  }
+
+  .mode-switch-btn {
+    flex: 1;
+    padding: 8px 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    transition: color var(--duration-normal) var(--ease-out);
+    letter-spacing: 0.005em;
+  }
+  .mode-switch-btn.active {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ============================
+     AMOUNT DISPLAY
+     ============================ */
+  .amount-section {
+    padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+    text-align: center;
+  }
+
+  .amount-label {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-sm);
+  }
+
+  .amount-value {
+    font-size: 3.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 2px;
+    min-height: 58px;
+    transition: transform var(--duration-fast) var(--ease-spring);
+  }
+  .amount-value.bump {
+    transform: scale(1.03);
+  }
+
+  .amount-currency {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 2px;
+  }
+
+  .amount-helper {
+    margin-top: var(--space-sm);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    min-height: 18px;
+    transition: opacity var(--duration-normal) var(--ease-out);
+  }
+
+  /* ============================
+     DENOMINATION GRID
+     ============================ */
+  .denom-section {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .denom-grid-primary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
+  .denom-grid-secondary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+  }
+
+  /* ---- Note Card ---- */
+  .note-card {
+    position: relative;
+    border-radius: var(--radius-md);
+    padding: var(--space-base) var(--space-md);
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    user-select: none;
+    transition:
+      transform var(--duration-fast) var(--ease-spring),
+      box-shadow var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+    overflow: hidden;
+  }
+  .note-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.6), transparent 70%);
+    transition: opacity var(--duration-fast) var(--ease-out);
+    pointer-events: none;
+  }
+  .note-card:active {
+    transform: scale(0.95);
+  }
+  .note-card:active::before {
+    opacity: 1;
+  }
+
+  /* -- Watermark pattern line across note card -- */
+  .note-card::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10%;
+    width: 120%;
+    height: 1px;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  .note-value {
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: baseline;
+    gap: 1px;
+  }
+  .note-value .note-rupee {
+    font-size: 0.875rem;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-right: 1px;
+  }
+
+  .note-label {
+    font-size: 0.625rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.5;
+    margin-top: 3px;
+  }
+
+  /* Counter badge on note card */
+  .note-count-badge {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    min-width: 22px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition:
+      opacity var(--duration-fast) var(--ease-spring),
+      transform var(--duration-fast) var(--ease-spring);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .note-card.has-count .note-count-badge {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* ---- Per-denomination colors ---- */
+  .note-500 {
+    background: var(--note-500-bg);
+    border-color: var(--note-500-border);
+    box-shadow: var(--shadow-note);
+    color: var(--note-500-text);
+  }
+  .note-500::after { background: var(--note-500-accent); }
+  .note-500:hover { box-shadow: var(--shadow-note-hover); }
+
+  .note-200 {
+    background: var(--note-200-bg);
+    border-color: var(--note-200-border);
+    box-shadow: var(--shadow-note);
+    color: var(--note-200-text);
+  }
+  .note-200::after { background: var(--note-200-accent); }
+  .note-200:hover { box-shadow: var(--shadow-note-hover); }
+
+  .note-100 {
+    background: var(--note-100-bg);
+    border-color: var(--note-100-border);
+    box-shadow: var(--shadow-note);
+    color: var(--note-100-text);
+  }
+  .note-100::after { background: var(--note-100-accent); }
+  .note-100:hover { box-shadow: var(--shadow-note-hover); }
+
+  .note-50 {
+    background: var(--note-50-bg);
+    border-color: var(--note-50-border);
+    box-shadow: var(--shadow-note);
+    color: var(--note-50-text);
+  }
+  .note-50::after { background: var(--note-50-accent); }
+  .note-50:hover { box-shadow: var(--shadow-note-hover); }
+
+  .note-20 {
+    background: var(--note-20-bg);
+    border-color: var(--note-20-border);
+    box-shadow: var(--shadow-note);
+    color: var(--note-20-text);
+  }
+  .note-20::after { background: var(--note-20-accent); }
+  .note-20:hover { box-shadow: var(--shadow-note-hover); }
+
+  .note-10 {
+    background: var(--note-10-bg);
+    border-color: var(--note-10-border);
+    box-shadow: var(--shadow-note);
+    color: var(--note-10-text);
+  }
+  .note-10::after { background: var(--note-10-accent); }
+  .note-10:hover { box-shadow: var(--shadow-note-hover); }
+
+  /* Secondary / smaller denominations */
+  .note-card.note-secondary {
+    min-height: 56px;
+    padding: var(--space-sm) var(--space-sm);
+  }
+  .note-secondary .note-value {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .note-secondary .note-value .note-rupee {
+    font-size: 0.75rem;
+  }
+  .note-secondary .note-label {
+    font-size: 0.5625rem;
+    margin-top: 2px;
+  }
+
+  .note-5 {
+    background: var(--note-5-bg);
+    border-color: var(--note-5-border);
+    box-shadow: var(--shadow-sm);
+    color: var(--note-5-text);
+  }
+  .note-5::after { background: var(--note-5-accent); }
+
+  .note-2 {
+    background: var(--note-2-bg);
+    border-color: var(--note-2-border);
+    box-shadow: var(--shadow-sm);
+    color: var(--note-2-text);
+  }
+  .note-2::after { background: var(--note-2-accent); }
+
+  .note-1 {
+    background: var(--note-1-bg);
+    border-color: var(--note-1-border);
+    box-shadow: var(--shadow-sm);
+    color: var(--note-1-text);
+  }
+  .note-1::after { background: var(--note-1-accent); }
+
+  /* ---- Note card decoration: corner guilloche hint ---- */
+  .note-card .note-corner {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+  .note-card .note-corner-tl {
+    top: -8px;
+    left: -8px;
+  }
+  .note-card .note-corner-br {
+    bottom: -8px;
+    right: -8px;
+  }
+  .note-500 .note-corner { background: var(--note-500-accent); }
+  .note-200 .note-corner { background: var(--note-200-accent); }
+  .note-100 .note-corner { background: var(--note-100-accent); }
+  .note-50  .note-corner { background: var(--note-50-accent); }
+  .note-20  .note-corner { background: var(--note-20-accent); }
+  .note-10  .note-corner { background: var(--note-10-accent); }
+  .note-5   .note-corner { background: var(--note-5-accent); }
+  .note-2   .note-corner { background: var(--note-2-accent); }
+  .note-1   .note-corner { background: var(--note-1-accent); }
+
+  /* ============================
+     PAYMENT TRAY
+     ============================ */
+  .tray-section {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .tray-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .tray-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-base) var(--space-base) var(--space-md);
+  }
+
+  .tray-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .tray-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-tertiary);
+  }
+
+  .tray-clear-btn {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: background var(--duration-fast) var(--ease-out);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-out);
+  }
+  .tray-card.has-items .tray-clear-btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .tray-clear-btn:hover {
+    background: var(--accent-light);
+  }
+
+  /* Empty state */
+  .tray-empty {
+    padding: var(--space-xl) var(--space-base);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .tray-empty-icon {
+    width: 36px;
+    height: 36px;
+    color: var(--text-tertiary);
+    opacity: 0.35;
+  }
+
+  .tray-empty-text {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.005em;
+  }
+
+  /* Tray items list */
+  .tray-items {
+    padding: 0 var(--space-base) var(--space-base);
+    display: none;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .tray-card.has-items .tray-items {
+    display: flex;
+  }
+  .tray-card.has-items .tray-empty {
+    display: none;
+  }
+
+  .tray-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    transition: opacity var(--duration-normal) var(--ease-out);
+  }
+
+  .tray-item-color {
+    width: 6px;
+    height: 28px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  /* Color strips per denomination */
+  .tray-item[data-denom="500"] .tray-item-color { background: var(--note-500-accent); }
+  .tray-item[data-denom="200"] .tray-item-color { background: var(--note-200-accent); }
+  .tray-item[data-denom="100"] .tray-item-color { background: var(--note-100-accent); }
+  .tray-item[data-denom="50"]  .tray-item-color { background: var(--note-50-accent); }
+  .tray-item[data-denom="20"]  .tray-item-color { background: var(--note-20-accent); }
+  .tray-item[data-denom="10"]  .tray-item-color { background: var(--note-10-accent); }
+  .tray-item[data-denom="5"]   .tray-item-color { background: var(--note-5-accent); }
+  .tray-item[data-denom="2"]   .tray-item-color { background: var(--note-2-accent); }
+  .tray-item[data-denom="1"]   .tray-item-color { background: var(--note-1-accent); }
+
+  .tray-item-info {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+  }
+
+  .tray-item-denom {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .tray-item-times {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+  }
+
+  .tray-item-subtotal {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: var(--space-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tray-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .tray-item-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-tertiary);
+    transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+  }
+  .tray-item-btn:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--text-secondary);
+  }
+  .tray-item-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Tray total */
+  .tray-total {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-base);
+    border-top: 1px solid var(--border-light);
+  }
+  .tray-card.has-items .tray-total {
+    display: flex;
+  }
+
+  .tray-total-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .tray-total-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============================
+     MESSAGE INPUT
+     ============================ */
+  .message-section {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-xl);
+  }
+
+  .message-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-base);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+  .message-input-wrap:focus-within {
+    border-color: var(--accent);
+  }
+
+  .message-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+
+  .message-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    outline: none;
+    font-family: inherit;
+  }
+  .message-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  /* Quick tags */
+  .message-tags {
+    display: flex;
+    gap: var(--space-sm);
+    padding: var(--space-sm) 0 0;
+    flex-wrap: wrap;
+  }
+
+  .message-tag {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
+    white-space: nowrap;
+  }
+  .message-tag:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  /* ============================
+     BOTTOM CTA
+     ============================ */
+  .bottom-cta {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    padding: var(--space-base) var(--space-lg);
+    padding-bottom: max(var(--space-base), env(safe-area-inset-bottom, 16px));
+    background: linear-gradient(to top, var(--bg) 70%, transparent);
+    z-index: 50;
+    flex-shrink: 0;
+  }
+
+  .cta-btn {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: 0.005em;
+    color: #FFFFFF;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition:
+      background var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-spring),
+      opacity var(--duration-fast) var(--ease-out);
+    box-shadow: 0 2px 12px rgba(26, 111, 239, 0.25);
+  }
+  .cta-btn:active {
+    transform: scale(0.98);
+  }
+  .cta-btn.disabled {
+    background: var(--border);
+    color: var(--text-tertiary);
+    box-shadow: none;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .cta-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* ============================
+     BEHAVIORAL NUDGE
+     ============================ */
+  .nudge-bar {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-md);
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      transform var(--duration-slow) var(--ease-out);
+    pointer-events: none;
+  }
+  .nudge-bar.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .nudge-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: var(--radius-sm);
+  }
+
+  .nudge-icon {
+    width: 16px;
+    height: 16px;
+    color: #D97706;
+    flex-shrink: 0;
+  }
+
+  .nudge-text {
+    font-size: 0.75rem;
+    color: #92400E;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* ============================
+     KEYPAD PLACEHOLDER (Amount Mode)
+     ============================ */
+  .keypad-section {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-lg);
+    display: none; /* hidden in Cash Mode */
+  }
+
+  .keypad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .keypad-key {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.375rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      background var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-spring);
+    user-select: none;
+  }
+  .keypad-key:active {
+    background: var(--bg);
+    transform: scale(0.96);
+  }
+  .keypad-key.key-backspace {
+    color: var(--text-tertiary);
+  }
+  .keypad-key.key-backspace svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* ============================
+     UTILITY & ANIMATION CLASSES
+     ============================ */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes badgePop {
+    0%   { transform: scale(0.5); }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .animate-in {
+    animation: fadeInUp var(--duration-normal) var(--ease-out) both;
+  }
+
+  /* stagger delays for note cards */
+  .denom-grid-primary .note-card:nth-child(1) { animation-delay: 40ms; }
+  .denom-grid-primary .note-card:nth-child(2) { animation-delay: 70ms; }
+  .denom-grid-primary .note-card:nth-child(3) { animation-delay: 100ms; }
+  .denom-grid-primary .note-card:nth-child(4) { animation-delay: 130ms; }
+  .denom-grid-primary .note-card:nth-child(5) { animation-delay: 160ms; }
+  .denom-grid-primary .note-card:nth-child(6) { animation-delay: 190ms; }
+  .denom-grid-secondary .note-card:nth-child(1) { animation-delay: 220ms; }
+  .denom-grid-secondary .note-card:nth-child(2) { animation-delay: 240ms; }
+  .denom-grid-secondary .note-card:nth-child(3) { animation-delay: 260ms; }
+
+  /* Tray item enter animation */
+  @keyframes trayItemIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .tray-item.entering {
+    animation: trayItemIn var(--duration-normal) var(--ease-out) both;
+  }
+
+  /* ============================
+     SCROLLBAR (subtle)
+     ============================ */
+  .app-scroll::-webkit-scrollbar {
+    width: 3px;
+  }
+  .app-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+  }
+
+  /* ============================
+     WALLET WEIGHT (Visual Depletion)
+     ============================ */
+  .wallet-section {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-base);
+  }
+
+  .wallet-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-base);
+  }
+
+  .wallet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .wallet-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .wallet-remaining {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .wallet-bar-track {
+    height: 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: var(--space-sm);
+  }
+
+  .wallet-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #34D399, #10B981);
+    transition: width var(--duration-slow) var(--ease-out), background var(--duration-slow) var(--ease-out);
+  }
+  .wallet-bar-fill.warn {
+    background: linear-gradient(90deg, #FBBF24, #F59E0B);
+  }
+  .wallet-bar-fill.danger {
+    background: linear-gradient(90deg, #F87171, #EF4444);
+  }
+
+  .wallet-stack {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+    margin-top: var(--space-sm);
+  }
+
+  .wallet-note {
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 4px;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity var(--duration-normal) var(--ease-out), transform var(--duration-normal) var(--ease-out);
+  }
+  .wallet-note.spent {
+    opacity: 0.2;
+    transform: scale(0.9);
+  }
+
+  .wallet-note.w-500 { background: var(--note-500-bg); color: var(--note-500-text); border: 1px solid var(--note-500-border); }
+  .wallet-note.w-200 { background: var(--note-200-bg); color: var(--note-200-text); border: 1px solid var(--note-200-border); }
+  .wallet-note.w-100 { background: var(--note-100-bg); color: var(--note-100-text); border: 1px solid var(--note-100-border); }
+  .wallet-note.w-50  { background: var(--note-50-bg); color: var(--note-50-text); border: 1px solid var(--note-50-border); }
+  .wallet-note.w-20  { background: var(--note-20-bg); color: var(--note-20-text); border: 1px solid var(--note-20-border); }
+  .wallet-note.w-10  { background: var(--note-10-bg); color: var(--note-10-text); border: 1px solid var(--note-10-border); }
+
+  /* ============================
+     SMART CASH CHALLENGE / STREAK
+     ============================ */
+  .streak-section {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-base);
+  }
+
+  .streak-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-md) var(--space-base);
+  }
+
+  .streak-fire {
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .streak-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .streak-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .streak-detail {
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+  }
+
+  .streak-badge {
+    padding: 4px 10px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #D97706;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  /* ============================
+     FUTURE REGRET PREVIEW
+     ============================ */
+  .regret-section {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-md);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity var(--duration-slow) var(--ease-out), transform var(--duration-slow) var(--ease-out);
+    pointer-events: none;
+  }
+  .regret-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .regret-card {
+    background: #F0F9FF;
+    border: 1px solid #BAE6FD;
+    border-radius: var(--radius-sm);
+    padding: var(--space-md);
+  }
+
+  .regret-title {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #0369A1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-sm);
+  }
+
+  .regret-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .regret-item {
+    font-size: 0.75rem;
+    color: #0C4A6E;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .regret-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #38BDF8;
+    flex-shrink: 0;
+  }
+
+  /* ============================
+     CONFIRM MODAL
+     ============================ */
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-out);
+  }
+  .confirm-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .confirm-sheet {
+    width: 100%;
+    max-width: 430px;
+    background: var(--surface);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: var(--space-xl) var(--space-lg);
+    padding-bottom: max(var(--space-xl), env(safe-area-inset-bottom, 24px));
+    transform: translateY(100%);
+    transition: transform var(--duration-normal) var(--ease-out);
+  }
+  .confirm-overlay.open .confirm-sheet {
+    transform: translateY(0);
+  }
+
+  .confirm-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.02em;
+  }
+
+  .confirm-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+
+  .confirm-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .confirm-pay-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 650;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(26, 111, 239, 0.25);
+  }
+
+  .confirm-cancel-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+  }
+  .confirm-cancel-btn:hover {
+    background: var(--bg);
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="app-scroll">
+
+    <!-- ======== TOP BAR ======== -->
+    <header class="top-bar">
+      <button class="back-btn" aria-label="Go back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5"/>
+          <path d="M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- ======== PAYEE SECTION ======== -->
+    <section class="payee-section">
+      <div class="payee-avatar">
+        <!-- Placeholder avatar using inline SVG data -->
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;background:#E5E7EB;">
+          <rect width="64" height="64" fill="#D1D5DB"/>
+          <circle cx="32" cy="24" r="12" fill="#9CA3AF"/>
+          <ellipse cx="32" cy="56" rx="20" ry="16" fill="#9CA3AF"/>
+        </svg>
+      </div>
+      <div class="payee-name">Sending money to <strong>Ashok</strong></div>
+      <div class="payee-upi">
+        <span>ashoklodwal@ptsbi</span>
+        <svg class="verified-badge" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l2.4 4.2L19 7.5l-3 3.8.4 4.7L12 14.4 7.6 16l.4-4.7-3-3.8 4.6-1.3z"/>
+          <path d="M10 13l-1.5-1.5L7 13l3 3 7-7-1.5-1.5L10 13z" fill="#fff"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ======== MODE SWITCH CARD ======== -->
+    <section class="mode-card">
+      <div class="mode-card-header">
+        <div class="mode-card-label">
+          <div class="mode-card-title">Smart Spending Mode</div>
+          <div class="mode-card-subtitle">Count it like cash before you pay</div>
+        </div>
+        <div class="mode-card-indicator"></div>
+      </div>
+      <div class="mode-switch">
+        <div class="mode-switch-track cash-active" id="modeSwitchTrack"></div>
+        <button class="mode-switch-btn" id="btnAmountMode">Amount Mode</button>
+        <button class="mode-switch-btn active" id="btnCashMode">Cash Mode</button>
+      </div>
+    </section>
+
+    <!-- ======== WALLET WEIGHT ======== -->
+    <section class="wallet-section" id="walletSection">
+      <div class="wallet-card">
+        <div class="wallet-header">
+          <span class="wallet-title">Today's cash wallet</span>
+          <span class="wallet-remaining" id="walletRemaining">₹2,000</span>
+        </div>
+        <div class="wallet-bar-track">
+          <div class="wallet-bar-fill" id="walletBarFill" style="width:100%"></div>
+        </div>
+        <div class="wallet-stack" id="walletStack"></div>
+      </div>
+    </section>
+
+    <!-- ======== STREAK / CHALLENGE ======== -->
+    <section class="streak-section" id="streakSection">
+      <div class="streak-card">
+        <div class="streak-fire">&#x1F525;</div>
+        <div class="streak-info">
+          <span class="streak-label">3 Day Streak</span>
+          <span class="streak-detail">You spent ₹850 less than usual</span>
+        </div>
+        <span class="streak-badge">Under budget</span>
+      </div>
+    </section>
+
+    <!-- ======== AMOUNT DISPLAY ======== -->
+    <section class="amount-section">
+      <div class="amount-label">Constructed amount</div>
+      <div class="amount-value" id="amountDisplay">
+        <span class="amount-currency">₹</span>
+        <span id="amountNumber">0</span>
+      </div>
+      <div class="amount-helper" id="amountHelper">You're counting this payment like cash</div>
+    </section>
+
+    <!-- ======== DENOMINATION GRID ======== -->
+    <section class="denom-section" id="denomSection">
+      <!-- Primary notes: ₹500, ₹200, ₹100, ₹50, ₹20, ₹10 -->
+      <div class="denom-grid-primary">
+        <div class="note-card note-500 animate-in" data-value="500" role="button" tabindex="0" aria-label="Add 500 rupee note">
+          <div class="note-corner note-corner-tl"></div>
+          <div class="note-corner note-corner-br"></div>
+          <span class="note-count-badge" id="badge-500">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>500</div>
+          <div class="note-label">note</div>
+        </div>
+        <div class="note-card note-200 animate-in" data-value="200" role="button" tabindex="0" aria-label="Add 200 rupee note">
+          <div class="note-corner note-corner-tl"></div>
+          <div class="note-corner note-corner-br"></div>
+          <span class="note-count-badge" id="badge-200">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>200</div>
+          <div class="note-label">note</div>
+        </div>
+        <div class="note-card note-100 animate-in" data-value="100" role="button" tabindex="0" aria-label="Add 100 rupee note">
+          <div class="note-corner note-corner-tl"></div>
+          <div class="note-corner note-corner-br"></div>
+          <span class="note-count-badge" id="badge-100">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>100</div>
+          <div class="note-label">note</div>
+        </div>
+        <div class="note-card note-50 animate-in" data-value="50" role="button" tabindex="0" aria-label="Add 50 rupee note">
+          <div class="note-corner note-corner-tl"></div>
+          <div class="note-corner note-corner-br"></div>
+          <span class="note-count-badge" id="badge-50">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>50</div>
+          <div class="note-label">note</div>
+        </div>
+        <div class="note-card note-20 animate-in" data-value="20" role="button" tabindex="0" aria-label="Add 20 rupee note">
+          <div class="note-corner note-corner-tl"></div>
+          <div class="note-corner note-corner-br"></div>
+          <span class="note-count-badge" id="badge-20">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>20</div>
+          <div class="note-label">note</div>
+        </div>
+        <div class="note-card note-10 animate-in" data-value="10" role="button" tabindex="0" aria-label="Add 10 rupee note">
+          <div class="note-corner note-corner-tl"></div>
+          <div class="note-corner note-corner-br"></div>
+          <span class="note-count-badge" id="badge-10">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>10</div>
+          <div class="note-label">note</div>
+        </div>
+      </div>
+
+      <!-- Secondary denominations: ₹5, ₹2, ₹1 -->
+      <div class="denom-grid-secondary">
+        <div class="note-card note-secondary note-5 animate-in" data-value="5" role="button" tabindex="0" aria-label="Add 5 rupee coin">
+          <span class="note-count-badge" id="badge-5">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>5</div>
+          <div class="note-label">coin</div>
+        </div>
+        <div class="note-card note-secondary note-2 animate-in" data-value="2" role="button" tabindex="0" aria-label="Add 2 rupee coin">
+          <span class="note-count-badge" id="badge-2">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>2</div>
+          <div class="note-label">coin</div>
+        </div>
+        <div class="note-card note-secondary note-1 animate-in" data-value="1" role="button" tabindex="0" aria-label="Add 1 rupee coin">
+          <span class="note-count-badge" id="badge-1">0</span>
+          <div class="note-value"><span class="note-rupee">₹</span>1</div>
+          <div class="note-label">coin</div>
+        </div>
+        <!-- Fourth cell empty for grid alignment -->
+        <div></div>
+      </div>
+    </section>
+
+    <!-- ======== BEHAVIORAL NUDGE ======== -->
+    <div class="nudge-bar" id="nudgeBar">
+      <div class="nudge-inner">
+        <svg class="nudge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 8v4M12 16h.01"/>
+        </svg>
+        <span class="nudge-text" id="nudgeText">Still want to spend ₹0?</span>
+      </div>
+    </div>
+
+    <!-- ======== FUTURE REGRET PREVIEW ======== -->
+    <section class="regret-section" id="regretSection">
+      <div class="regret-card">
+        <div class="regret-title">This equals</div>
+        <div class="regret-items" id="regretItems"></div>
+      </div>
+    </section>
+
+    <!-- ======== PAYMENT TRAY ======== -->
+    <section class="tray-section">
+      <div class="tray-card" id="trayCard">
+        <div class="tray-header">
+          <div class="tray-title">
+            <svg class="tray-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            Payment tray
+          </div>
+          <button class="tray-clear-btn" id="trayClearBtn">Clear all</button>
+        </div>
+
+        <!-- Empty state -->
+        <div class="tray-empty" id="trayEmpty">
+          <svg class="tray-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            <path d="M9 14h6"/>
+          </svg>
+          <span class="tray-empty-text">Tap notes to build your amount</span>
+        </div>
+
+        <!-- Tray items container (populated by JS) -->
+        <div class="tray-items" id="trayItems">
+          <!-- Tray items will render here -->
+        </div>
+
+        <!-- Tray total -->
+        <div class="tray-total">
+          <span class="tray-total-label">Total</span>
+          <span class="tray-total-value" id="trayTotalValue">₹0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== MESSAGE INPUT ======== -->
+    <section class="message-section">
+      <div class="message-input-wrap">
+        <svg class="message-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <input type="text" class="message-input" placeholder="Add a message" maxlength="140" id="messageInput">
+      </div>
+      <div class="message-tags">
+        <span class="message-tag">Grocery</span>
+        <span class="message-tag">Lunch</span>
+        <span class="message-tag">Rent</span>
+        <span class="message-tag">Utilities</span>
+      </div>
+    </section>
+
+    <!-- ======== KEYPAD (Amount Mode) ======== -->
+    <section class="keypad-section" id="keypadSection">
+      <div class="keypad-grid">
+        <button class="keypad-key" data-key="1">1</button>
+        <button class="keypad-key" data-key="2">2</button>
+        <button class="keypad-key" data-key="3">3</button>
+        <button class="keypad-key" data-key="4">4</button>
+        <button class="keypad-key" data-key="5">5</button>
+        <button class="keypad-key" data-key="6">6</button>
+        <button class="keypad-key" data-key="7">7</button>
+        <button class="keypad-key" data-key="8">8</button>
+        <button class="keypad-key" data-key="9">9</button>
+        <button class="keypad-key" data-key=".">.</button>
+        <button class="keypad-key" data-key="0">0</button>
+        <button class="keypad-key key-backspace" data-key="backspace">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
+            <line x1="18" y1="9" x2="12" y2="15"/>
+            <line x1="12" y1="9" x2="18" y2="15"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ======== BOTTOM CTA ======== -->
+    <div class="bottom-cta">
+      <button class="cta-btn disabled" id="ctaBtn">Select amount</button>
+    </div>
+
+  </div><!-- end .app-scroll -->
+
+  <!-- ======== CONFIRM MODAL ======== -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-sheet">
+      <div class="confirm-amount" id="confirmAmount">₹5,000</div>
+      <div class="confirm-desc">Are you sure you want to pay this amount?</div>
+      <div class="confirm-actions">
+        <button class="confirm-pay-btn" id="confirmPayBtn">Yes, pay now</button>
+        <button class="confirm-cancel-btn" id="confirmCancelBtn">Go back</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .app-shell -->
+
+<script>
+  // ============================================
+  // PASS 2: Full interactivity + behavioral layers
+  // ============================================
+
+  const MAX_NOTES = 50;          // #2: Cap per denomination
+  const DAILY_LIMIT = 2000;      // #9: Daily budget for nudge
+  const LARGE_PAYMENT = 5000;    // #11: Threshold for confirm modal
+
+  const state = {
+    mode: 'cash',
+    notes: {},
+    total: 0,
+    keypadValue: '',
+    prevTrayKeys: new Set()      // #5: Track which tray items existed before
+  };
+
+  const denominations = [500, 200, 100, 50, 20, 10, 5, 2, 1];
+
+  // Spending equivalents for regret preview (#15)
+  const equivalents = [
+    { unit: 'cup of chai', cost: 15, icon: '☕' },
+    { unit: 'auto ride', cost: 30, icon: '🛺' },
+    { unit: 'lunch', cost: 150, icon: '🍛' },
+    { unit: 'movie ticket', cost: 250, icon: '🎬' },
+    { unit: 'week of groceries', cost: 1500, icon: '🛒' }
+  ];
+
+  // Wallet decomposition for visual depletion (#13)
+  const WALLET_NOTES = [
+    { d: 500, count: 2 },
+    { d: 200, count: 2 },
+    { d: 100, count: 4 },
+    { d: 50, count: 2 },
+    { d: 20, count: 5 },
+    { d: 10, count: 0 }
+  ]; // sums to 2000
+
+  // DOM references
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
+
+  const amountNumber = $('#amountNumber');
+  const amountDisplay = $('#amountDisplay');
+  const amountHelper = $('#amountHelper');
+  const denomSection = $('#denomSection');
+  const keypadSection = $('#keypadSection');
+  const trayCard = $('#trayCard');
+  const trayItems = $('#trayItems');
+  const trayTotalValue = $('#trayTotalValue');
+  const trayClearBtn = $('#trayClearBtn');
+  const ctaBtn = $('#ctaBtn');
+  const nudgeBar = $('#nudgeBar');
+  const nudgeText = $('#nudgeText');
+  const modeSwitchTrack = $('#modeSwitchTrack');
+  const btnAmountMode = $('#btnAmountMode');
+  const btnCashMode = $('#btnCashMode');
+  const walletRemaining = $('#walletRemaining');
+  const walletBarFill = $('#walletBarFill');
+  const walletStack = $('#walletStack');
+  const regretSection = $('#regretSection');
+  const regretItems = $('#regretItems');
+  const confirmOverlay = $('#confirmOverlay');
+  const confirmAmount = $('#confirmAmount');
+  const confirmPayBtn = $('#confirmPayBtn');
+  const confirmCancelBtn = $('#confirmCancelBtn');
+
+  // ---- Format helpers ----
+  function formatAmount(n) {
+    return n.toLocaleString('en-IN');
+  }
+
+  // #4: Decompose amount into denominations (greedy)
+  function decomposeAmount(amount) {
+    const notes = {};
+    let rem = Math.floor(amount);
+    denominations.forEach(d => {
+      const count = Math.floor(rem / d);
+      if (count > 0) {
+        notes[d] = Math.min(count, MAX_NOTES);
+        rem -= notes[d] * d;
+      }
+    });
+    return notes;
+  }
+
+  // ---- Update total & UI ----
+  function recalcTotal() {
+    let total = 0;
+    for (const [denom, count] of Object.entries(state.notes)) {
+      total += parseInt(denom) * count;
+    }
+    state.total = total;
+    return total;
+  }
+
+  function updateUI() {
+    const total = state.mode === 'cash' ? recalcTotal() : parseInt(state.keypadValue || '0');
+
+    // Amount display
+    amountNumber.textContent = formatAmount(total);
+
+    // Bump animation
+    amountDisplay.classList.add('bump');
+    setTimeout(() => amountDisplay.classList.remove('bump'), 150);
+
+    // CTA
+    if (total > 0) {
+      ctaBtn.textContent = `Pay ₹${formatAmount(total)}`;
+      ctaBtn.classList.remove('disabled');
+    } else {
+      ctaBtn.textContent = 'Select amount';
+      ctaBtn.classList.add('disabled');
+    }
+
+    // #9: Nudge — percentage-based daily budget awareness
+    if (total > 0 && total >= DAILY_LIMIT * 0.5) {
+      nudgeBar.classList.add('visible');
+      const pct = Math.round(total / DAILY_LIMIT * 100);
+      if (pct >= 100) {
+        nudgeText.textContent = `This exceeds today's ₹${formatAmount(DAILY_LIMIT)} cash budget`;
+      } else {
+        nudgeText.textContent = `You've used ${pct}% of today's ₹${formatAmount(DAILY_LIMIT)} cash`;
+      }
+    } else {
+      nudgeBar.classList.remove('visible');
+    }
+
+    // Badges on note cards
+    denominations.forEach(d => {
+      const badge = $(`#badge-${d}`);
+      const card = $(`.note-card[data-value="${d}"]`);
+      const count = state.notes[d] || 0;
+      if (badge) badge.textContent = count;
+      if (card) {
+        if (count > 0) card.classList.add('has-count');
+        else card.classList.remove('has-count');
+      }
+    });
+
+    // Tray
+    renderTray();
+
+    // #13: Wallet weight visualization
+    updateWallet(total);
+
+    // #15: Regret preview
+    updateRegret(total);
+  }
+
+  // #5: Tray render — only animate NEW items
+  function renderTray() {
+    const entries = Object.entries(state.notes)
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => parseInt(b[0]) - parseInt(a[0]));
+
+    const newKeys = new Set(entries.map(([d]) => d));
+
+    if (entries.length === 0) {
+      trayCard.classList.remove('has-items');
+      trayItems.innerHTML = '';
+      state.prevTrayKeys = newKeys;
+      return;
+    }
+
+    trayCard.classList.add('has-items');
+
+    trayItems.innerHTML = entries.map(([denom, count]) => {
+      const isNew = !state.prevTrayKeys.has(denom);
+      return `
+      <div class="tray-item${isNew ? ' entering' : ''}" data-denom="${denom}">
+        <div class="tray-item-color"></div>
+        <div class="tray-item-info">
+          <span class="tray-item-denom">₹${parseInt(denom).toLocaleString('en-IN')}</span>
+          <span class="tray-item-times">× ${count}</span>
+        </div>
+        <span class="tray-item-subtotal">₹${(parseInt(denom) * count).toLocaleString('en-IN')}</span>
+        <div class="tray-item-controls">
+          <button class="tray-item-btn tray-minus" data-denom="${denom}" aria-label="Remove one ₹${denom} note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <button class="tray-item-btn tray-plus" data-denom="${denom}" aria-label="Add one ₹${denom} note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+
+    state.prevTrayKeys = newKeys;
+    trayTotalValue.textContent = `₹${formatAmount(state.total)}`;
+
+    // Attach tray button listeners
+    trayItems.querySelectorAll('.tray-minus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const d = parseInt(btn.dataset.denom);
+        if (state.notes[d]) {
+          state.notes[d]--;
+          if (state.notes[d] <= 0) delete state.notes[d];
+          updateUI();
+        }
+      });
+    });
+    trayItems.querySelectorAll('.tray-plus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const d = parseInt(btn.dataset.denom);
+        state.notes[d] = Math.min((state.notes[d] || 0) + 1, MAX_NOTES);
+        updateUI();
+      });
+    });
+  }
+
+  // #13: Wallet weight — visual depletion
+  function updateWallet(spent) {
+    const remaining = Math.max(0, DAILY_LIMIT - spent);
+    walletRemaining.textContent = `₹${formatAmount(remaining)} remaining`;
+
+    const pct = (remaining / DAILY_LIMIT) * 100;
+    walletBarFill.style.width = pct + '%';
+    walletBarFill.classList.remove('warn', 'danger');
+    if (pct <= 25) walletBarFill.classList.add('danger');
+    else if (pct <= 50) walletBarFill.classList.add('warn');
+
+    // Build visual note stack
+    let budget = remaining;
+    const stackHTML = [];
+    WALLET_NOTES.forEach(({ d, count }) => {
+      for (let i = 0; i < count; i++) {
+        const isSpent = budget < d;
+        stackHTML.push(
+          `<span class="wallet-note w-${d}${isSpent ? ' spent' : ''}">₹${d}</span>`
+        );
+        if (!isSpent) budget -= d;
+      }
+    });
+    walletStack.innerHTML = stackHTML.join('');
+  }
+
+  // #15: Future regret preview
+  function updateRegret(total) {
+    if (total < 100) {
+      regretSection.classList.remove('visible');
+      return;
+    }
+
+    regretSection.classList.add('visible');
+    const items = equivalents
+      .filter(e => total >= e.cost)
+      .map(e => {
+        const qty = Math.floor(total / e.cost);
+        const label = qty === 1 ? e.unit : (e.unit === 'lunch' ? 'lunches' : e.unit + 's');
+        return `<div class="regret-item"><span class="regret-dot"></span>${e.icon} ${qty} ${label}</div>`;
+      });
+    regretItems.innerHTML = items.join('');
+  }
+
+  // ---- Note card tap + long-press + keyboard + haptic + debounce ----
+  $$('.note-card[data-value]').forEach(card => {
+    // #7 + #8: Tap with haptic animation and debounce
+    card.addEventListener('click', () => {
+      if (state.mode !== 'cash') return;
+      if (card.dataset.lock) return;                    // #8: debounce
+      card.dataset.lock = 'true';
+      setTimeout(() => { card.dataset.lock = ''; }, 120);
+
+      const val = parseInt(card.dataset.value);
+      state.notes[val] = Math.min((state.notes[val] || 0) + 1, MAX_NOTES); // #2: cap
+      updateUI();
+
+      // #7: haptic-like visual feedback
+      card.style.transform = 'scale(0.93)';
+      setTimeout(() => { card.style.transform = ''; }, 120);
+    });
+
+    // #3: Right-click / long-press to remove
+    card.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      const val = parseInt(card.dataset.value);
+      if (state.notes[val]) {
+        state.notes[val]--;
+        if (state.notes[val] <= 0) delete state.notes[val];
+        updateUI();
+      }
+    });
+
+    // #10: Keyboard support
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.click();
+      }
+    });
+  });
+
+  // ---- Clear tray ----
+  trayClearBtn.addEventListener('click', () => {
+    state.notes = {};
+    updateUI();
+  });
+
+  // ---- Mode toggle ----
+  btnCashMode.addEventListener('click', () => {
+    if (state.mode === 'cash') return;
+    state.mode = 'cash';
+    modeSwitchTrack.classList.add('cash-active');
+    btnCashMode.classList.add('active');
+    btnAmountMode.classList.remove('active');
+    denomSection.style.display = '';
+    keypadSection.style.display = 'none';
+    amountHelper.textContent = "You're counting this payment like cash";
+    amountHelper.style.opacity = '1';
+
+    // #4: Auto-decompose from keypad value
+    const numVal = parseFloat(state.keypadValue) || 0;
+    if (numVal > 0) {
+      state.notes = decomposeAmount(numVal);
+    }
+    updateUI();
+  });
+
+  btnAmountMode.addEventListener('click', () => {
+    if (state.mode === 'amount') return;
+    state.mode = 'amount';
+    modeSwitchTrack.classList.remove('cash-active');
+    btnAmountMode.classList.add('active');
+    btnCashMode.classList.remove('active');
+    denomSection.style.display = 'none';
+    keypadSection.style.display = '';
+    amountHelper.textContent = '';
+    amountHelper.style.opacity = '0';
+    nudgeBar.classList.remove('visible');
+    regretSection.classList.remove('visible');
+    state.keypadValue = '';
+    amountNumber.textContent = '0';
+    ctaBtn.textContent = 'Select amount';
+    ctaBtn.classList.add('disabled');
+  });
+
+  // ---- Keypad (Amount Mode) — #1: Fixed formatting ----
+  $$('.keypad-key').forEach(key => {
+    key.addEventListener('click', () => {
+      if (state.mode !== 'amount') return;
+      const k = key.dataset.key;
+      if (k === 'backspace') {
+        state.keypadValue = state.keypadValue.slice(0, -1);
+      } else if (k === '.') {
+        if (!state.keypadValue.includes('.')) {
+          state.keypadValue += state.keypadValue ? '.' : '0.';
+        }
+      } else {
+        if (state.keypadValue.length < 7) {
+          state.keypadValue += k;
+        }
+      }
+      const numVal = parseFloat(state.keypadValue) || 0;
+      const formatted = numVal ? numVal.toLocaleString('en-IN') : '0'; // #1: locale format
+      amountNumber.textContent = formatted;
+      amountDisplay.classList.add('bump');
+      setTimeout(() => amountDisplay.classList.remove('bump'), 150);
+
+      if (numVal > 0) {
+        ctaBtn.textContent = `Pay ₹${formatted}`;                      // #1: formatted CTA
+        ctaBtn.classList.remove('disabled');
+      } else {
+        ctaBtn.textContent = 'Select amount';
+        ctaBtn.classList.add('disabled');
+      }
+    });
+  });
+
+  // #11: CTA click — friction confirmation for large payments
+  ctaBtn.addEventListener('click', () => {
+    const total = state.mode === 'cash' ? state.total : (parseFloat(state.keypadValue) || 0);
+    if (total <= 0) return;
+
+    if (total > LARGE_PAYMENT) {
+      confirmAmount.textContent = `₹${formatAmount(total)}`;
+      confirmOverlay.classList.add('open');
+      return;
+    }
+    // Normal flow — would proceed to payment
+  });
+
+  confirmCancelBtn.addEventListener('click', () => {
+    confirmOverlay.classList.remove('open');
+  });
+  confirmOverlay.addEventListener('click', (e) => {
+    if (e.target === confirmOverlay) confirmOverlay.classList.remove('open');
+  });
+  confirmPayBtn.addEventListener('click', () => {
+    confirmOverlay.classList.remove('open');
+    // Would proceed to payment
+  });
+
+  // ---- Message tags ----
+  $$('.message-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const input = $('#messageInput');
+      input.value = tag.textContent;
+      input.focus();
+    });
+  });
+
+  // Initial render
+  updateUI();
+</script>
+
+</body>
+</html>
